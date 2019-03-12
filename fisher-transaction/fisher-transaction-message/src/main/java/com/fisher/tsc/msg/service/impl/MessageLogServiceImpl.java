@@ -17,6 +17,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.util.*;
 
 
@@ -36,7 +37,7 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
         messageLog.setCreateTime(new Date());
         messageLog.setUpdateTime(new Date());
         boolean saveFlag = save(messageLog);
-        if (saveFlag){
+        if (saveFlag) {
             return messageLog.getMessageId();
         }
         return null;
@@ -45,20 +46,20 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
     @Override
     public boolean confirmAndSendMessage(String messageId) {
         MessageLog messageLog = messageLogMapper.queryMessageLogByMessageId(messageId);
-        if (messageLog != null){
+        if (messageLog != null) {
             String messageBody = messageLog.getMessageBody();
             String eventType = messageLog.getEventType();
             IMessageEventHandler iMessageEventHandler = handlers.get(eventType);//获取该事件对应的处理器
-            if (iMessageEventHandler != null){
-                iMessageEventHandler.sendMsg(messageLog.getMessageId(),messageBody);//发送消息
+            if (iMessageEventHandler != null) {
+                iMessageEventHandler.sendMsg(messageLog.getMessageId(), messageBody);//发送消息
                 messageLog.setStatus(MessageStatusEnum.SENDING.name());
                 updateById(messageLog);//更新消息的状态为发送中
                 return true;
-            }else{
-                log.warn("confirmAndSendMessage iMessageEventHandler not exist：{}",messageLog);
+            } else {
+                log.warn("confirmAndSendMessage iMessageEventHandler not exist：{}", messageLog);
             }
-        }else{
-            log.warn("messageLog not exist:{}",messageId);
+        } else {
+            log.warn("messageLog not exist:{}", messageId);
         }
         return false;
     }
@@ -66,11 +67,11 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
     @Override
     public void confirmConsumeSuccess(String messageId) {
         MessageLog messageLog = messageLogMapper.queryMessageLogByMessageId(messageId);
-        if (messageLog == null){
+        if (messageLog == null) {
             throw new RuntimeException("未找到该消息");
         }
         IMessageEventHandler iMessageEventHandler = handlers.get(messageLog.getEventType());
-        if (iMessageEventHandler == null){
+        if (iMessageEventHandler == null) {
             throw new RuntimeException("未找到该事件对应的处理器");
         }
         iMessageEventHandler.confirmConsumeSuccess(messageLog);
@@ -79,18 +80,19 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
     @Override
     public void doBatchHandleWaitingMessage() {
         Calendar nowTime = Calendar.getInstance();
-        nowTime.add(Calendar.MINUTE, -1);//当前时间减去1分钟
+        //当前时间减去1分钟
+        nowTime.add(Calendar.MINUTE, -1);
 
         IPage<MessageLog> iPage = messageLogMapper.selectPage(new Page<MessageLog>(1, 50),
                 new QueryWrapper<MessageLog>()
-                        .eq("status", MessageStatusEnum.WAITING_CONFIRM.getCode())//
-                        .le("create_time",nowTime.getTime())
+                        .eq("status", MessageStatusEnum.WAITING_CONFIRM.getCode())
+                        .le("create_time", nowTime.getTime())
         );
         List<MessageLog> records = iPage.getRecords();
-        records.stream().forEach(item -> {
+        records.forEach(item -> {
             String eventType = item.getEventType();
             IMessageEventHandler iMessageEventHandler = handlers.get(eventType);
-            if (iMessageEventHandler == null){
+            if (iMessageEventHandler == null) {
                 throw new RuntimeException("未找到该事件对应的处理器");
             }
             iMessageEventHandler.doHandleWaitingMessage(item);
@@ -100,19 +102,20 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
     @Override
     public void doBatchHandleSendingMessage() {
         Calendar nowTime = Calendar.getInstance();
-        nowTime.add(Calendar.MINUTE, -1);//当前时间减去1分钟
+        //当前时间减去1分钟
+        nowTime.add(Calendar.MINUTE, -1);
 
-        IPage<MessageLog> iPage = messageLogMapper.selectPage(new Page<MessageLog>(1, 50),
+        IPage<MessageLog> iPage = messageLogMapper.selectPage(new Page<>(1, 50),
                 new QueryWrapper<MessageLog>()
-                        .eq("status", MessageStatusEnum.SENDING.getCode())//
+                        .eq("status", MessageStatusEnum.SENDING.getCode())
                         .eq("dead", PublicEnum.NO.getCode())
-                        .le("create_time",nowTime.getTime())
+                        .le("create_time", nowTime.getTime())
         );
         List<MessageLog> records = iPage.getRecords();
-        records.stream().forEach(item -> {
+        records.forEach(item -> {
             String eventType = item.getEventType();
             IMessageEventHandler iMessageEventHandler = handlers.get(eventType);
-            if (iMessageEventHandler == null){
+            if (iMessageEventHandler == null) {
                 throw new RuntimeException("未找到该事件对应的处理器");
             }
             iMessageEventHandler.doHandleSendingMessage(item);
@@ -128,9 +131,10 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
         messageLog.setUpdateTime(new Date());
         messageLogMapper.updateById(messageLog);
         String eventType = messageLog.getEventType();
-        IMessageEventHandler iMessageEventHandler = handlers.get(eventType);//获取该事件对应的处理器
+        //获取该事件对应的处理器
+        IMessageEventHandler iMessageEventHandler = handlers.get(eventType);
         //发送消息
-        iMessageEventHandler.sendMsg(messageLog.getMessageId(),messageLog.getMessageBody());
+        iMessageEventHandler.sendMsg(messageLog.getMessageId(), messageLog.getMessageBody());
     }
 
     @Override
@@ -140,7 +144,8 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
         }
         MessageLog messageLog = messageLogMapper.queryMessageLogByMessageId(messageId);
         String eventType = messageLog.getEventType();
-        IMessageEventHandler iMessageEventHandler = handlers.get(eventType);//获取该事件对应的处理器
+        //获取该事件对应的处理器
+        IMessageEventHandler iMessageEventHandler = handlers.get(eventType);
         //发送消息
         iMessageEventHandler.reSendMsg(messageLog);
     }
@@ -149,21 +154,21 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
      * 根据条件获取消息
      */
     @Override
-    public Map<String, Object> getMsgByStateAndIsDeadAndIsTimeout(int page, int size, String messageId,String status, String dead) {
+    public Map<String, Object> getMsgByStateAndIsDeadAndIsTimeout(int page, int size, String messageId, String status, String dead) {
         Page<MessageLog> litemallpage = new Page<>(page, size);
         QueryWrapper<MessageLog> queryWrapper = new QueryWrapper<MessageLog>();
         if (!StringUtils.isEmpty(messageId)) {
-            queryWrapper.eq("message_id",messageId);
+            queryWrapper.eq("message_id", messageId);
         }
         if (!StringUtils.isEmpty(status)) {
-            queryWrapper.eq("status",status);
+            queryWrapper.eq("status", status);
         }
         if (!StringUtils.isEmpty(dead)) {
-            queryWrapper.eq("dead",dead);
+            queryWrapper.eq("dead", dead);
         }
-        queryWrapper.last("order by id asc" );
+        queryWrapper.last("order by id asc");
         IPage<MessageLog> userIPage = messageLogMapper.selectPage(litemallpage, queryWrapper);
-        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         result.put("total", userIPage.getTotal());
         result.put("page", page);
         result.put("size", size);
@@ -173,7 +178,7 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
     }
 
 
-    private HashMap<String,IMessageEventHandler> handlers;
+    private HashMap<String, IMessageEventHandler> handlers;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -184,7 +189,6 @@ public class MessageLogServiceImpl extends ServiceImpl<MessageLogMapper, Message
 
     /**
      * 检查消息参数是否为空
-     *
      */
     private void checkEmptyMessage(MessageLog messageLog) {
         if (messageLog == null) {

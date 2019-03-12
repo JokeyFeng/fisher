@@ -12,6 +12,7 @@ import com.fisher.tsc.personal.service.IPersonalBalanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Date;
 
 
@@ -26,12 +27,14 @@ public class PersonalBalanceServiceImpl implements IPersonalBalanceService {
     PersonalBalanceTradeOrderMapper personalBalanceTradeOrderMapper;
     @Autowired
     PersonalMessageClient personalMessageClient;
+
     @Override
     public void dealWithTranferFromCapitalMessage(String message) {
         OrderMessage orderMessage = JsonUtils.toBean(message, OrderMessage.class);
         String messageId = orderMessage.getMessageId();
         PersonalTradeOrder oderBalanceTreasureTradeOrder = personalBalanceTradeOrderMapper.queryBalanceTreasureTradeOrderByMessageId(messageId);
-        if(oderBalanceTreasureTradeOrder == null){//根据messageId去查询订单，如果不存在，做生成订单，增加个人账户额度
+        //根据messageId去查询订单，如果不存在，做生成订单，增加个人账户额度
+        if (oderBalanceTreasureTradeOrder == null) {
             PersonalTradeOrder balanceTreasureTradeOrder = new PersonalTradeOrder();
             balanceTreasureTradeOrder.setOrderNo(orderMessage.getOrderNo());
             balanceTreasureTradeOrder.setAmount(orderMessage.getAmount());

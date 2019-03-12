@@ -78,12 +78,4 @@ public class SysLogAspect {
         }
         return result;
     }
-
-
-
-
-
-
-
-
 }

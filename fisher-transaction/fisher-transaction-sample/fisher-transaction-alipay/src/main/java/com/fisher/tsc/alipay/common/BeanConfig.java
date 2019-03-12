@@ -10,7 +10,4 @@ public class BeanConfig {
     public IdWorker idWorker(){
         return new IdWorker();
     }
-
-
-
 }

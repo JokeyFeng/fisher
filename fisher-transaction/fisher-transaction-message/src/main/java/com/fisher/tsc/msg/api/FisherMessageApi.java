@@ -18,6 +18,4 @@ public interface FisherMessageApi {
 
     @RequestMapping("message/reSendMessageByMessageId")
     boolean reSendMessageByMessageId(@RequestParam("messageId") String messageId);
-
-
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.Version;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.Date;
 
 @TableName("personal_balance_account")
 @Data
-@ApiModel(value="PersonalBalanceAccount对象", description="")
+@ApiModel(value = "PersonalBalanceAccount对象", description = "")
 public class PersonalBalanceAccount implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,9 +35,7 @@ public class PersonalBalanceAccount implements Serializable {
     @Version
     private Integer version;
 
-    public void transferIn(BigDecimal amount){
+    public void transferIn(BigDecimal amount) {
         totalAmount = totalAmount.add(amount);
     }
-
-
 }

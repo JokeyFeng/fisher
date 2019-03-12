@@ -119,7 +119,4 @@
             <version>${futool.version}</version>
         </dependency>
     </dependencies>
-
-
-
 </project>

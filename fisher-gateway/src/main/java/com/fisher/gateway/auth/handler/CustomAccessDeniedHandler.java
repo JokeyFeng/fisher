@@ -27,7 +27,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     private ObjectMapper objectMapper;
 
     /**
-     *  授权拒绝处理器
+     * 授权拒绝处理器
+     *
      * @param request
      * @param response
      * @param accessDeniedException
@@ -35,7 +36,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
      * @throws ServletException
      */
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         log.info("授权失败, 禁止访问{}", request.getRequestURI());
         response.setContentType("application/json;charset=UTF-8");
         ApiResult<String> result = new ApiResult<>(new PermissionDefinedException(), ResponseCodeEnum.PERMISSION_DEFINED);
