@@ -17,6 +17,4 @@
         <module>fisher-cache-spring-boot-starter-parent</module>
         <module>fisher-lock-springboot-starter-parent</module>
     </modules>
-
-
 </project>

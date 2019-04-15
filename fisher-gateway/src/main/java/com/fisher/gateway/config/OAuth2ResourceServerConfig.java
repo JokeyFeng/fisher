@@ -41,9 +41,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
      */
     @Bean
     public RedisTokenStore redisTokenStore() {
-        RedisTokenStore store = new RedisTokenStore(redisConnectionFactory);
-//        store.setPrefix(SecurityConstants.CLOUD_PREFIX);
-        return store;
+        return new RedisTokenStore(redisConnectionFactory);
     }
 
     @Autowired
@@ -57,7 +55,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowCredentials(true);
+//        corsConfiguration.setAllowCredentials(true)
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedMethod("*");
