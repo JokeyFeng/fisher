@@ -4,6 +4,9 @@ package com.fisher.gen.model.config;
 import lombok.Data;
 
 
+/**
+ * @author yiheni
+ */
 @Data
 public class ColumnInfoConfig {
 

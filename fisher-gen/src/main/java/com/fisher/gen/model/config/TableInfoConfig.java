@@ -6,6 +6,9 @@ import lombok.Data;
 import java.util.List;
 
 
+/**
+ * @author yiheni
+ */
 @Data
 public class TableInfoConfig extends BaseConfig{
 

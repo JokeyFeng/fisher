@@ -15,6 +15,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.springframework.beans.BeanUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -47,7 +48,8 @@ public class GenUtil {
 
     /**
      * 生成代码
-     * @param tableInfo 
+     *
+     * @param tableInfo
      * @param columns
      * @param zip
      */
@@ -60,17 +62,16 @@ public class GenUtil {
         TableInfoConfig tableConfig = new TableInfoConfig();
 
         //  配置 包名等配置
-        buildTableConfig(buildConfigDTO ,config, tableConfig);
+        buildTableConfig(buildConfigDTO, config, tableConfig);
 
 
         BeanUtils.copyProperties(tableInfo, tableConfig);
 
         //  构建表基本信息
-        buildTableInfo(config, tableConfig,columns);
+        buildTableInfo(config, tableConfig, columns);
 
         // 生成代码
         gen(buildConfigDTO, tableConfig, zip);
-
 
 
     }
@@ -79,7 +80,7 @@ public class GenUtil {
      * 列名转换成Java属性名
      */
     public static String columnToJava(String columnName) {
-        return WordUtils.capitalizeFully(columnName, new char[] { '_' }).replace("_", "");
+        return WordUtils.capitalizeFully(columnName, new char[]{'_'}).replace("_", "");
     }
 
     /**
@@ -106,7 +107,7 @@ public class GenUtil {
     /**
      * 获取文件名
      */
-    public static String getFileName(String template,TableInfoConfig tableInfoConfig) {
+    public static String getFileName(String template, TableInfoConfig tableInfoConfig) {
         String packagePath = "main" + File.separator + "java" + File.separator
                 + tableInfoConfig.getPackageName().replace(".", File.separator);
         String frontPath = "ui" + File.separator;
@@ -155,7 +156,7 @@ public class GenUtil {
                     + "Controller.java";
         }
         if (template.contains("templates/Mapper.xml.vm")) {
-            return resourcesPath + File.separator+  "mapper" + File.separator+ className
+            return resourcesPath + File.separator + "mapper" + File.separator + className
                     + "Mapper.xml";
         }
         return null;
@@ -163,44 +164,45 @@ public class GenUtil {
 
     /**
      * 构建表配置信息  包名等
+     *
      * @param buildConfigDTO
      * @param configuration
      * @param tableInfoConfig
      */
-    public static void buildTableConfig(BuildConfigDTO buildConfigDTO,Configuration configuration,TableInfoConfig tableInfoConfig) {
+    public static void buildTableConfig(BuildConfigDTO buildConfigDTO, Configuration configuration, TableInfoConfig tableInfoConfig) {
 
         BeanUtils.copyProperties(buildConfigDTO, tableInfoConfig);
 
-        if(StringUtils.isEmpty(tableInfoConfig.getPackageName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getPackageName())) {
             tableInfoConfig.setPackageName(configuration.getString("packageName", "com.fisher.gen.model.entity"));
 
         }
-        if(StringUtils.isEmpty(tableInfoConfig.getDaoPackageName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getDaoPackageName())) {
             tableInfoConfig.setDaoPackageName(configuration.getString("daoPackageName", "com.fisher.gen.mapper"));
 
         }
-        if(StringUtils.isEmpty(tableInfoConfig.getControllerPackageName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getControllerPackageName())) {
             tableInfoConfig.setDaoPackageName(configuration.getString("controllerPackageName", "com.fisher.gen.controller"));
 
         }
-        if(StringUtils.isEmpty(tableInfoConfig.getMapperPackageName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getMapperPackageName())) {
             tableInfoConfig.setDaoPackageName(configuration.getString("mapperPackageName", "com.fisher.gen.mapper"));
 
         }
 
-        if(StringUtils.isEmpty(tableInfoConfig.getAuthorName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getAuthorName())) {
             tableInfoConfig.setAuthorName(configuration.getString("authorName", "Allen"));
         }
 
-        if(StringUtils.isEmpty(tableInfoConfig.getServiceApiPackageName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getServiceApiPackageName())) {
             tableInfoConfig.setServiceApiPackageName(configuration.getString("serviceApiPackageName", "com.fisher.gen.service.api"));
         }
 
-        if(StringUtils.isEmpty(tableInfoConfig.getServicePackageName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getServicePackageName())) {
             tableInfoConfig.setServicePackageName(configuration.getString("servicePackageName", "com.fisher.gen.service"));
         }
 
-        if(StringUtils.isEmpty(tableInfoConfig.getQueryPackageName())) {
+        if (StringUtils.isEmpty(tableInfoConfig.getQueryPackageName())) {
             tableInfoConfig.setQueryPackageName(configuration.getString("queryPackageName", "com.fisher.gen.mapper"));
         }
 
@@ -208,11 +210,12 @@ public class GenUtil {
 
     /**
      * 构建表基本数据信息
+     *
      * @param config
      * @param tableConfig
      * @param columns
      */
-    public static void  buildTableInfo(Configuration config,TableInfoConfig tableConfig,List<ColumnInfo> columns) {
+    public static void buildTableInfo(Configuration config, TableInfoConfig tableConfig, List<ColumnInfo> columns) {
         // 表名转换成Java类名
         String className = tableToJava(tableConfig.getTableName(), config.getString("tablePrefix"));
         tableConfig.setClassName(className);
@@ -240,7 +243,7 @@ public class GenUtil {
                 hasBigDecimal = true;
             }
             // 是否主键
-            if ( tableConfig.getPk() == null && StringUtils.equalsIgnoreCase("PRI", column.getColumnKey()) ) {
+            if (tableConfig.getPk() == null && StringUtils.equalsIgnoreCase("PRI", column.getColumnKey())) {
                 tableConfig.setPk(columnEntity);
             }
 
@@ -256,11 +259,12 @@ public class GenUtil {
 
     /**
      * 生成代码
+     *
      * @param buildConfigDTO
      * @param tableConfig
      * @param zip
      */
-    public static void gen(BuildConfigDTO buildConfigDTO,TableInfoConfig tableConfig, ZipOutputStream zip) {
+    public static void gen(BuildConfigDTO buildConfigDTO, TableInfoConfig tableConfig, ZipOutputStream zip) {
         // 设置velocity资源加载器
         Properties prop = new Properties();
         prop.put("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -294,7 +298,9 @@ public class GenUtil {
 
     }
 
-    //首字母转小写
+    /**
+     * 首字母转小写
+     */
     public static String toLowerCaseFirstOne(String s) {
         if (Character.isLowerCase(s.charAt(0))) {
             return s;

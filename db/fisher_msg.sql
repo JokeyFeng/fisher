@@ -17,4 +17,4 @@ CREATE TABLE `message_log`
   `creater`            varchar(100)          DEFAULT NULL COMMENT '创建者',
   PRIMARY KEY (`id`),
   KEY                  `message_id_index` (`message_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='日志表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='消息日志表';

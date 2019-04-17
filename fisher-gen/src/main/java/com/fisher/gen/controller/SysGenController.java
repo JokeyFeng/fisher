@@ -21,7 +21,6 @@ import java.io.IOException;
 
 
 @Controller
-//@RequestMapping("/gen")
 @Api(value = "代码生成controller", tags = {"代码生成接口管理"})
 public class SysGenController {
 
@@ -36,7 +35,7 @@ public class SysGenController {
 
     @SysLog(serviceId = FisherServiceNameConstants.FISHER_GEN_SERVICE, moduleName = MODULE_NAME, actionName = "分页查询数据库中所有的表信息")
     @ApiOperation(value = "分页查询数据库中所有的表信息", notes = "分页查询数据库中所有的表信息", httpMethod = "GET")
-    @ApiImplicitParam(name = "query", value = "表信息查询条件", required = false, dataType = "TableInfoQuery")
+    @ApiImplicitParam(name = "query", value = "表信息查询条件", dataType = "TableInfoQuery")
     @ResponseBody
     @GetMapping("/code/page")
     public ApiResult<TableInfoQuery> page(TableInfoQuery query){
